@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 
 const todoRoute = require("./routes/todo.route")
+const userRoute = require("./routes/user.route");
 
 dotenv.config()
 
@@ -19,6 +20,7 @@ const app = express();
 app.use (express.json())
 
 app.use("/todo", todoRoute)
+app.use("/user", userRoute)
 
 
 

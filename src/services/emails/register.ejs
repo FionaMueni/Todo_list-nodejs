@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Confirmation</title>
+    <style>
+        .container{
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        
+        }
+        .header{
+            font-weight: bold;
+            font-size: x-large;
+            color: blue;
+        }
+        h2{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <h1 class="header">Dear: <%- name  %> </h1>
+    <p> <%- email %></p>
+    <img src="https://images.unsplash.com/photo-1704461539031-e7c2145e5fc4?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxM3x8fGVufDB8fHx8fA%3D%3D"/>
+</div>
+</body>
+</html>

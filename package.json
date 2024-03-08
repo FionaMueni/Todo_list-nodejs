@@ -11,6 +11,7 @@
   "author": "Fiona",
   "license": "ISC",
   "dependencies": {
+    "@tabler/icons-react": "^2.47.0",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "dotenv": "^16.3.1",
@@ -23,5 +24,8 @@
   },
   "bin": {
     "execute": "index.js"
+  },
+  "devDependencies": {
+    "winston": "^3.11.0"
   }
 }

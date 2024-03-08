@@ -12,41 +12,46 @@ class UserController {
 
 async Register(req, res){
     try{
-        const {username, email, phoneNumber, password, passwordconfirmation} = 
+        const { username, email, phoneNumber, password, password_confirmation } =
         req.body;
-        if(password !== passwordconfirmation){
-            res.status(500).json("password do not match");
-        }
 
+      if (password !== password_confirmation)
+        res.status(500).json("Password do not match");
 
-        const hashed = CryptoJs.SHA256(password, process.env.PASSWORD_KEY).toString();
+      const hashed = CryptoJs.SHA256(
+        password,
+        process.env.PASSWORD_KEY
+      ).toString();
 
-        const newUser = new User({
-            username,
-            email,
-            phoneNumber,
-            password: hashed
-        });
+      const newUser = new User({
+        username,
+        email,
+        phoneNumber,
+        password: hashed,
+      });
 
-        await newUser.save();
+      await newUser.save();
 
-        const filePath = path.join(__dirname, '../services/emails/register.ejs');
-        const html = await ejs.renderFile(filePath, {name:newUser.username, email: newUser.email})
+      const filePath = path.join(__dirname, "../services/emails/register.ejs");
 
-       const info = await transporter.sendMail({
-            from: process.env.GMAIL_NAME,
-            to: newUser.email,
-            subject: "welcome to Todo-List",
-            html: html
+      let html = await ejs.renderFile(filePath, {
+        name: newUser.username,
+        email: newUser.email,
+      });
 
-        })
+      const info = await transporter.sendMail({
+        from: process.env.GMAIL_NAME,
+        to: newUser.email,
+        subject: "Welcome to Todo-List",
+        html,
+      });
 
-        console.log ("Message sent: %s ", info.messageId);
+      console.log("Message sent: %s ", info.messageId);
 
-        res.status(201).json({
-            message: "Registration successful. Proceeed to login",
-            data: newUser
-        });
+      res.status(201).json({
+        message: "Registration successful. Login to proceed",
+        data: newUser,
+      });
 
 
 
@@ -91,16 +96,13 @@ async Login (req, res){
         const accessToken = jwt.sign({
             id: user._id,
             email: user.email
-        }, process.env.JWT_KEY, {expiresIn: "5h"})
+        }, process.env.JWT_KEY, {expiresIn: "10s"})
 
-        res.status(200).json({ 
-            message: "login successful",
-            data: {
-                email: user.email, 
-                username: user.username
-            },
-            accessToken: accessToken
-        })
+        res.status(200).json({
+            message: "Login successful",
+            data: user,
+            accessToken: accessToken,
+          });
 
 
     }catch(error){
@@ -148,6 +150,34 @@ async ForgotPassword (req, res) {
 
 
 }
+
+async ForgotPasswordReset(req, res){
+    try{
+        const {resetToken, newPassword} = req.body
+        const user = await User.findOne({resetToken: resetToken}); 
+        if (!user){response.status(404).json({message: "user not found"})}
+        
+        const hashed = crypto.Js.SHA256(
+            newPassword,
+            process.env.PASSWORD_KEY 
+        ).toString()
+
+        user.password = hashed;
+        user.resetToken = undefined;
+        await user.save();
+
+        res.status(200).json({
+            message: "Password updated successfully"
+        })
+
+    } catch(error){
+        console.log(error)
+    }
 }
+
+}
+
+// comst stringToNum = "20"
+// parse (stringToNum)
 
 module.exports = new UserController();

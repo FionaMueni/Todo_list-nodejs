@@ -68,23 +68,30 @@ async Login (req, res){
         // generate access token => userid and email
         // send access token + Username
 
-        const {email, password} = req.body
-        const user = await User.findOne({ email: email})
-        if(!user){
-            res.status(404).json({ message: "User not found"})
-        }
+        const { email, password } = req.body;
+      const user = await User.findOne({ email: email });
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+      }
 
-        const hashedPassword = CryptoJs.SHA256(password, process.env.PASSWORD_KEY).toString();
+      const hashedPassword = CryptoJs.SHA256(
+        password,
+        process.env.PASSWORD_KEY
+      ).toString();
+
+      const ifPasswordMatch = user.password === hashedPassword;
+        // console.log({password, hashedPassword})
 
          /* `ifPasswordMatch` is a boolean variable that checks if the hashed password provided by
         the user matches the hashed password stored in the database for the user. It compares
         the two hashed passwords and returns `true` if they match, indicating that the
         password provided by the user is correct. If the hashed passwords do not match, it
         returns `false`, indicating that the password provided by the user is incorrect. */
-        const ifPasswordMatch  = user.password === hashedPassword
-        if (!ifPasswordMatch){
-            res.status(404).json({ message: "Either password of email is incorrect" })
-        }
+        if (!ifPasswordMatch) {
+            res
+              .status(404)
+              .json({ message: "Either password or email is incorrect" });
+          }
 
         // JSONWEBTOKEN 
         // import jwt from jsonwebtoken
@@ -93,12 +100,16 @@ async Login (req, res){
         // =>secret key
         // expiration period
 
-        const accessToken = jwt.sign({
-            id: user._id,
-            email: user.email
-        }, process.env.JWT_KEY, {expiresIn: "10s"})
-
-        res.status(200).json({
+        const accessToken = jwt.sign(
+            {
+              id: user._id,
+              email: user.email,
+            },
+            process.env.JWT_KEY,
+            { expiresIn: "2h" }
+          );
+    
+          res.status(200).json({
             message: "Login successful",
             data: user,
             accessToken: accessToken,

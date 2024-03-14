@@ -1,12 +1,15 @@
-const Todo = require("./../models/Todo.model")
+const Todo = require("./../models/Todo.model");
+
 class TodoController{
     constructor(){}
 
     async addTodo(req, res){
         try{
+
+       
         //   console.log (req.body.todo) 
 
-        const newTodo= await new Todo({todo: req.body.todo})
+        const newTodo= await new Todo({todo: req.body.todo, image: `http://localhost:8000/${req.file.path}`})
         newTodo.save()
 
         res.status(201).json({message: "Todo created successfully", data: newTodo})
@@ -78,10 +81,12 @@ class TodoController{
                res.status(200).json(findTodo)
         } catch (error) {
             console.log(error)
+        }
     }
     
 };
 
-};
+
 module.exports = new TodoController();
+
 

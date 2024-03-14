@@ -22,6 +22,7 @@ mongoose.connect(process.env.MONGODB_STRING).then(function(){
 })
 
 const app = express();
+app.use("/images", express.static("images"))
 app.use(cors())
 app.use (express.json())
 

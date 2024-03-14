@@ -6,7 +6,7 @@ const authenticateRequest = () => {
             const authHeader = req.headers.authorization;
 
             if(authHeader){
-              const token =  authHeader.split("")[1];
+              const token =  authHeader.split(" ")[1];
 
               jwt.verify(token, process.env.JWT_KEY, (error, user)=> {
                 if(error) return res.status(403).json("Token is invalid")
